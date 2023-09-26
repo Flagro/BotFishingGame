@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 import logging
 import pymongo
 from pymongo import MongoClient
+import motor.motor_asyncio
 
 from telegram import Update, ForceReply
 from telegram.ext import filters, MessageHandler, ApplicationBuilder, CommandHandler, ContextTypes, Updater, CallbackContext
@@ -19,8 +20,11 @@ TELEGRAM_TOKEN = os.getenv('TELEGRAM_TOKEN')
 MONGODB_URI = os.getenv('MONGODB_URI')
 
 # Initialize MongoDB client and select the database and collection
-client = MongoClient(MONGODB_URI)
-db = client.get_database('fishing_game_db')
+# client = MongoClient(MONGODB_URI)
+# db = client.get_database('fishing_game_db')
+# inventory_collection = db.get_collection('inventory')
+client = motor.motor_asyncio.AsyncIOMotorClient(MONGODB_URI)
+db = client.get_database('async_fishing_game_db')
 inventory_collection = db.get_collection('inventory')
 
 logging.basicConfig(
