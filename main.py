@@ -14,7 +14,9 @@ load_dotenv()
 
 # Read environment variables
 TELEGRAM_TOKEN = os.getenv('TELEGRAM_TOKEN')
-MONGODB_URI = os.getenv('MONGODB_URI')
+MONGODB_HOST = os.getenv("MONGODB_HOST")
+MONGODB_PORT = os.getenv("MONGODB_PORT")
+MONGODB_URI = f"mongodb://{MONGODB_HOST}:{MONGODB_PORT}"
 
 # Initialize MongoDB client and select the database and collection
 # client = MongoClient(MONGODB_URI)
