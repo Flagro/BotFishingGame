@@ -4,13 +4,10 @@ from datetime import datetime
 from dotenv import load_dotenv
 import logging
 import pymongo
-from pymongo import MongoClient
 import motor.motor_asyncio
 
-from telegram import Update, ForceReply
-from telegram.ext import filters, MessageHandler, ApplicationBuilder, CommandHandler, ContextTypes, Updater, CallbackContext
-from telegram import InlineQueryResultArticle, InputTextMessageContent
-from telegram.ext import InlineQueryHandler
+from telegram import Update
+from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 
 # Load environment variables from .env file
 load_dotenv()
