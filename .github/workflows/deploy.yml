@@ -19,7 +19,10 @@ jobs:
         host: ${{ secrets.SERVER_IP }}
         username: ${{ secrets.SERVER_USER }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
+        envs: TELEGRAM_TOKEN
         script: |
           cd BotFishingGame
           git pull origin main
+          cp .env-example .env
+          echo "TELEGRAM_TOKEN=${{ secrets.TELEGRAM_TOKEN }}" >> .env
           sudo ../limited-docker-compose.sh up -d
