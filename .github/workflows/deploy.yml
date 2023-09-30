@@ -1,34 +1,25 @@
-name: Deploy Bot to VPS
+name: Simple Deploy
 
 on:
   push:
     branches:
-      - main
+      - main  # run the Action on push events to the main branch.
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
     
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v2
+      
     - name: Deploy to VPS
-      env:
-        PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-        HOST: ${{ secrets.HOST }}
-        USER: ${{ secrets.USER }}
-      run: |
-        # Install SSH Client
-        sudo apt-get install -y openssh-client
-        # Write SSH Key
-        echo "$PRIVATE_KEY" > private_key
-        chmod 600 private_key
-        
-        # SSH and deploy
-        ssh -o StrictHostKeyChecking=no -i private_key $USER@$HOST <<- 'ENDSSH'
-          cd /path/to/your/project
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SERVER_IP }}
+        username: ${{ secrets.SERVER_USER }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        script: |
+          cd BotFishingGame
           git pull origin main
-          docker-compose down
-          docker-compose up --build -d
-        ENDSSH
+          sudo ../limited-docker-compose.sh up -d
