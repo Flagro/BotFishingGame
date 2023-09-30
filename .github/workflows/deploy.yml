@@ -1,0 +1,34 @@
+name: Deploy Bot to VPS
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    
+    - name: Deploy to VPS
+      env:
+        PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        HOST: ${{ secrets.HOST }}
+        USER: ${{ secrets.USER }}
+      run: |
+        # Install SSH Client
+        sudo apt-get install -y openssh-client
+        # Write SSH Key
+        echo "$PRIVATE_KEY" > private_key
+        chmod 600 private_key
+        
+        # SSH and deploy
+        ssh -o StrictHostKeyChecking=no -i private_key $USER@$HOST <<- 'ENDSSH'
+          cd /path/to/your/project
+          git pull origin main
+          docker-compose down
+          docker-compose up --build -d
+        ENDSSH
