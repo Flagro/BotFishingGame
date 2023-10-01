@@ -38,7 +38,19 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def fish(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.message.from_user.id
-    fish_types = ['Salmon', 'Trout', 'Bass', 'Catfish']
+    fish_types = [
+        'Salmon', 'Trout', 'Bass', 'Catfish', 'Seahorse', 'Clownfish',
+        'Cod', 'Eel', 'Flounder', 'Mackerel', 'Marlin', 'Swordfish', 
+        'Octopus', 'Jellyfish', 'Starfish', 'Squid', 'Shark', 'Dolphin',
+        'Whale', 'Tuna', 'Crab', 'Lobster', 'Shrimp', 'Oyster', 'Clam',
+        'Snapper', 'Grouper', 'Barracuda', 'Sardine', 'Herring', 'Anchovy',
+        'Pufferfish', 'Stingray', 'Boot', 'Empty Bottle', 'Tree Branch',
+        'Seaweed', 'Coral', 'Pearl', 'Old Can', 'Plastic Bag', 'Tire',
+        'Message in a Bottle', 'Sunken Treasure Chest', 'Anchor',
+        'Shipwreck Remains', 'Pirate Hat', 'Fishbone', 'Fishing Net',
+        'Submarine Toy'
+    ]
+
     caught_fish = random.choice(fish_types)
     weight = round(random.uniform(1, 5), 2)  # weight in kg
     length = round(random.uniform(20, 100), 2)  # length in cm
