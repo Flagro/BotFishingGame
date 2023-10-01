@@ -25,4 +25,4 @@ jobs:
           git pull origin main
           cp .env-example .env
           echo "TELEGRAM_TOKEN=${{ secrets.TELEGRAM_TOKEN }}" >> .env
-          sudo ../limited-docker-compose.sh up -d
+          sudo ../limited-docker-compose.sh up -d --build
