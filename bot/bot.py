@@ -83,7 +83,7 @@ async def inventory(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 
-def main():
+def run_bot():
     application = ApplicationBuilder().token(TELEGRAM_TOKEN).build()
     
     handlers = [
@@ -99,4 +99,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    run_bot()
