@@ -48,7 +48,7 @@ async def fish(update: Update, context: ContextTypes.DEFAULT_TYPE):
         'Seaweed', 'Coral', 'Pearl', 'Old Can', 'Plastic Bag', 'Tire',
         'Message in a Bottle', 'Sunken Treasure Chest', 'Anchor',
         'Shipwreck Remains', 'Pirate Hat', 'Fishbone', 'Fishing Net',
-        'Submarine Toy'
+        'Submarine Toy', 'Golden Coin'
     ]
 
     caught_fish = random.choice(fish_types)
