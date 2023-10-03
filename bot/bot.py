@@ -53,7 +53,6 @@ async def fish(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     caught_fish = random.choice(fish_types)
     weight = round(random.uniform(1, 5), 2)  # weight in kg
-    length = round(random.uniform(20, 100), 2)  # length in cm
     caught_at = datetime.utcnow()
     
     # Insert the caught fish into the inventory collection
@@ -61,11 +60,10 @@ async def fish(update: Update, context: ContextTypes.DEFAULT_TYPE):
         'user_id': user_id,
         'fish_type': caught_fish,
         'weight': weight,
-        'length': length,
         'caught_at': caught_at
     })
 
-    await context.bot.send_message(chat_id=update.effective_chat.id, text=f'You caught a {caught_fish}!\nWeight: {weight} kg\nLength: {length} cm')
+    await context.bot.send_message(chat_id=update.effective_chat.id, text=f'You caught a {caught_fish}!\nWeight: {weight} kg')
 
 
 async def inventory(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -88,7 +86,6 @@ async def inventory(update: Update, context: ContextTypes.DEFAULT_TYPE):
         inventory_message += (
             f"Fish Type: {item['fish_type']}, "
             f"Weight: {item['weight']} kg, "
-            f"Length: {item['length']} cm, "
             f"Caught At: {caught_at}\n"
         )
     await context.bot.send_message(chat_id=update.effective_chat.id, text=inventory_message)
