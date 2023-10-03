@@ -10,8 +10,6 @@ services:
     
   mongo:
     image: "mongo"
-    ports:
-      - "${MONGODB_PORT}:${MONGODB_PORT}"
     volumes:
       - mongodb_data:/data/db
 
