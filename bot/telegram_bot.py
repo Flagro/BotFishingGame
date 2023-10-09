@@ -39,7 +39,7 @@ class TelegramEpicFishingBot:
         await context.bot.send_message(chat_id=update.effective_chat.id, text=f"Hi {user_name}!")
 
     def get_caught_item(self):
-        chance = random.uniform(0, 1)
+        chance = random.uniform(0, 100)
         cumulative_chance = 0
         for item in self.fish_types:
             cumulative_chance += item['chance']
