@@ -1,7 +1,7 @@
 import os
 import logging
 from dotenv import load_dotenv
-from .telegram_bot import TelegramEpicFishingBot
+from telegram_bot import TelegramEpicFishingBot
 
 
 def main():
