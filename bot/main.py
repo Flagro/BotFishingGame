@@ -14,7 +14,8 @@ def main():
     )
 
     bot = TelegramEpicFishingBot(telegram_token=os.getenv('TELEGRAM_TOKEN'),
-                                 mongodb_url="mongodb://{}:{}".format(os.getenv("MONGODB_HOST"), os.getenv("MONGODB_PORT")))
+                                 mongodb_url="mongodb://{}:{}".format(os.getenv("MONGODB_HOST"), os.getenv("MONGODB_PORT")),
+                                 items_file_path="./data/sea_items.json")
     
     bot.run()
 

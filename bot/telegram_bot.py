@@ -1,4 +1,5 @@
 import random
+import json
 from datetime import datetime
 import pymongo
 import motor.motor_asyncio
@@ -8,13 +9,19 @@ from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes, Appli
 
 
 class TelegramEpicFishingBot:
-    def __init__(self, telegram_token, mongodb_url):
+    def __init__(self, telegram_token, mongodb_url, items_file_path):
+        with open(items_file_path, 'r') as f:
+            self.fish_types = json.load(f)
+
+        # Telegram bot token
         self.telegram_token = telegram_token
+
         # Initialize MongoDB client and select the database and collection
         client = motor.motor_asyncio.AsyncIOMotorClient(mongodb_url)
         db = client.get_database('async_fishing_game_db')
         self.inventory_collection = db.get_collection('inventory')
 
+        # Commands and handlers
         self.commands = [
             BotCommand(command="start", description="Start the fishing adventure and get instructions."),
             BotCommand(command="fish", description="Try your luck and fish something from the sea."),
@@ -31,34 +38,35 @@ class TelegramEpicFishingBot:
         user_name = update.effective_user.first_name
         await context.bot.send_message(chat_id=update.effective_chat.id, text=f"Hi {user_name}!")
 
+    def get_caught_item(self):
+        chance = random.uniform(0, 1)
+        cumulative_chance = 0
+        for item in self.fish_types:
+            cumulative_chance += item['chance']
+            if chance <= cumulative_chance:
+                return item
+        return None  # None indicates nothing was caught
+
     async def fish(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         user_id = update.message.from_user.id
-        fish_types = [
-            'Salmon', 'Trout', 'Bass', 'Catfish', 'Seahorse', 'Clownfish',
-            'Cod', 'Eel', 'Flounder', 'Mackerel', 'Marlin', 'Swordfish', 
-            'Octopus', 'Jellyfish', 'Starfish', 'Squid', 'Shark', 'Dolphin',
-            'Whale', 'Tuna', 'Crab', 'Lobster', 'Shrimp', 'Oyster', 'Clam',
-            'Snapper', 'Grouper', 'Barracuda', 'Sardine', 'Herring', 'Anchovy',
-            'Pufferfish', 'Stingray', 'Boot', 'Empty Bottle', 'Tree Branch',
-            'Seaweed', 'Coral', 'Pearl', 'Old Can', 'Plastic Bag', 'Tire',
-            'Message in a Bottle', 'Sunken Treasure Chest', 'Anchor',
-            'Shipwreck Remains', 'Pirate Hat', 'Fishbone', 'Fishing Net',
-            'Submarine Toy', 'Golden Coin'
-        ]
 
-        caught_fish = random.choice(fish_types)
-        weight = round(random.uniform(1, 5), 2)  # weight in kg
-        caught_at = datetime.utcnow()
-        
-        # Insert the caught fish into the inventory collection
-        self.inventory_collection.insert_one({
-            'user_id': user_id,
-            'fish_type': caught_fish,
-            'weight': weight,
-            'caught_at': caught_at
-        })
-
-        await context.bot.send_message(chat_id=update.effective_chat.id, text=f'You caught a {caught_fish}!\nWeight: {weight} kg')
+        caught_item = self.get_caught_item()
+    
+        # Check if anything was caught
+        if caught_item:
+            weight = round(random.uniform(caught_item['min_weight'], caught_item['max_weight']), 2)
+            caught_at = datetime.utcnow()
+            
+            # Insert the caught item into the inventory collection
+            await self.inventory_collection.insert_one({
+                'user_id': user_id,
+                'item_name': caught_item['name'],
+                'weight': weight,
+                'caught_at': caught_at
+            })
+            await context.bot.send_message(chat_id=update.effective_chat.id, text=f'You caught a {caught_item["name"]}!\nWeight: {weight} kg')
+        else:
+            await context.bot.send_message(chat_id=update.effective_chat.id, text='Oh no, you caught nothing! Try again.')
 
     async def inventory(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         user_id = update.message.from_user.id
