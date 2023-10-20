@@ -82,11 +82,12 @@ class TelegramEpicFishingBot:
             await update.message.reply_text('Your inventory is empty!')
             return
         
+        item_name = item.get('item_name', 'Unknown')
         inventory_message = 'Your Inventory:\n'
         for item in user_inventory:
             caught_at = item['caught_at'].strftime('%Y-%m-%d %H:%M:%S')
             inventory_message += (
-                f"Fish Type: {item['item_name']}, "
+                f"Fish Type: {item_name}, "
                 f"Weight: {item['weight']} kg, "
                 f"Caught At: {caught_at}\n"
             )
