@@ -72,7 +72,7 @@ class TelegramEpicFishingBot:
         user_id = update.message.from_user.id
         try:
             user_inventory_cursor = self.inventory_collection.find({'user_id': user_id})
-            user_inventory = await user_inventory_cursor.to_list(length=100)  # Adjust length as needed
+            user_inventory = await user_inventory_cursor.to_list(length=20)  # Adjust length as needed
         except pymongo.errors.PyMongoError as e:
             print(f"MongoDB Error: {e}")
             await update.message.reply_text('An error occurred while fetching your inventory!')
