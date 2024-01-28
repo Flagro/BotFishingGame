@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main  # run the Action on push events to the main branch.
+  workflow_dispatch:
+
 
 jobs:
   deploy:
