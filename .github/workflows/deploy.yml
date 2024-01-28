@@ -23,7 +23,13 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         envs: TELEGRAM_TOKEN
         script: |
-          cd BotFishingGame
+          if [ -d $HOME/BotFishingGame ]; then
+            cd ~/BotFishingGame
+            git pull origin main
+          else
+            git clone https://github.com/Flagro/BotFishingGame.git ~/BotFishingGame
+            cd ~/BotFishingGame
+          fi
           git pull origin main
           cp .env-example .env
           echo "TELEGRAM_TOKEN=${{ secrets.TELEGRAM_TOKEN }}" >> .env
