@@ -73,6 +73,9 @@ coverage.xml
 .project
 .pydevproject
 
+# Local development configuration
+.venv
+
 # Rope
 .ropeproject
 
