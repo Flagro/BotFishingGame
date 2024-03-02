@@ -1,20 +1,17 @@
 name: Simple Deploy
 
 on:
-  push:
-    branches:
-      - main  # run the Action on push events to the main branch.
   workflow_dispatch:
 
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    
+
     steps:
     - name: Checkout Code
       uses: actions/checkout@v2
-      
+
     - name: Deploy to VPS
       uses: appleboy/ssh-action@master
       with:
