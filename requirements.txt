@@ -1,3 +1,4 @@
-python-telegram-bot==20.3
-motor==2.5.1
-python-dotenv==0.19.1
+python-telegram-bot==20.8
+python-decouple==3.8
+alembic==1.13.1
+SQLAlchemy==2.0.27
