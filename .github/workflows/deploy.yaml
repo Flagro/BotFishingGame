@@ -1,32 +1,52 @@
-name: Simple Deploy
+name: Deploy to Kubernetes
 
 on:
+  workflow_run:
+    workflows: ["Publish Docker Image"]
+    types:
+      - completed
   workflow_dispatch:
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
+    if: ${{ github.event.workflow_run.conclusion == 'success' }} || ${{ github.event_name == 'workflow_dispatch' }}
     steps:
-    - name: Checkout Code
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Deploy to VPS
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{ secrets.SERVER_IP }}
-        username: ${{ secrets.SERVER_USER }}
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
-        envs: TELEGRAM_TOKEN
-        script: |
-          if [ -d $HOME/BotFishingGame ]; then
-            cd ~/BotFishingGame
-            git pull origin main
-          else
-            git clone https://github.com/Flagro/BotFishingGame.git ~/BotFishingGame
-            cd ~/BotFishingGame
+      - name: Fetch tags
+        run: git fetch --depth=1 --tags
+
+      - name: Get latest tag or set default
+        id: latest_tag
+        run: |
+          TAG=$(git tag -l --sort=-v:refname | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' | head -n 1)
+          if [ -z "$TAG" ]; then
+            TAG="latest"
           fi
-          git pull origin main
-          cp .env-example .env
-          echo "TELEGRAM_TOKEN=${{ secrets.TELEGRAM_TOKEN }}" >> .env
-          sudo ../limited-docker-compose.sh up -d --build
+          echo "::set-output name=tag::$TAG"
+
+      - name: Configure kubectl
+        uses: azure/k8s-set-context@v1
+        with:
+          kubeconfig: ${{ secrets.KUBE_CONFIG }}
+
+      - name: Create Namespace (if not exists)
+        run: |
+          kubectl get ns phrinifluent || kubectl create ns phrinifluent
+
+      - name: Install yq (YAML Processor)
+        run: sudo snap install yq
+
+      - name: Update Chart.yaml
+        run: |
+          yq eval -i ".version = \"${{ steps.latest_tag.outputs.tag }}\"" ./helm/Chart.yaml
+          yq eval -i ".appVersion = \"${{ steps.latest_tag.outputs.tag }}\"" ./helm/Chart.yaml
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v4.1.0
+
+      - name: Deploy with Helm
+        run: |
+          echo "Deploying to Kubernetes"
