@@ -33,7 +33,7 @@ class TelegramEpicFishingBot:
             CommandHandler("fish", self.fish),
             CommandHandler("inventory", self.inventory)
         ]
-    
+
     async def start(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         user_name = update.effective_user.first_name
         await context.bot.send_message(chat_id=update.effective_chat.id, text=f"Hi {user_name}!")
@@ -51,12 +51,12 @@ class TelegramEpicFishingBot:
         user_id = update.message.from_user.id
 
         caught_item = self.get_caught_item()
-    
+
         # Check if anything was caught
         if caught_item:
             weight = round(random.uniform(caught_item['min_weight'], caught_item['max_weight']), 2)
             caught_at = datetime.utcnow()
-            
+
             # Insert the caught item into the inventory collection
             await self.inventory_collection.insert_one({
                 'user_id': user_id,
@@ -81,7 +81,7 @@ class TelegramEpicFishingBot:
         if not user_inventory:
             await update.message.reply_text('Your inventory is empty!')
             return
-        
+
         inventory_message = 'Your Inventory:\n'
         for item in user_inventory:
             item_name = item.get('item_name', 'Unknown')
@@ -107,8 +107,8 @@ class TelegramEpicFishingBot:
             .token(self.telegram_token) \
             .post_init(self.post_init) \
             .build()
-    
+
         for handler in self.handlers:
             application.add_handler(handler)
-        
+
         application.run_polling()
