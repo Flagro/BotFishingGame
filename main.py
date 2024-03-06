@@ -1,6 +1,6 @@
 import logging
 from decouple import config
-from bot.telegram_bot import TelegramEpicFishingBot
+from bot.bot import TelegramEpicFishingBot
 
 
 def main():
